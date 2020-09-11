@@ -4,6 +4,12 @@ class PrefixSet(object):
         self._prefix_dic = {}
         self._replace_map = {}
 
+    def get_keywords(self):
+        return {w for w, f in self._prefix_dic.items() if f == 1}
+
+    def get_replace_map(self):
+        return {a: b for a, b in self._replace_map.items() if b is not None}
+
     def add_keywords_from_list(self, words: list):
         for word in words:
             self.add_keyword(word)
@@ -85,23 +91,3 @@ class PrefixSet(object):
                 new_sentence += sentence[i]
                 i += 1
         return new_sentence
-
-
-if __name__ == '__main__':
-    ps = PrefixSet()
-    ps.add_keywords_from_list(["清华", "清华大学"])
-
-    from flashtext import KeywordProcessor
-
-    keyword_processor = KeywordProcessor()
-    keyword_processor.add_keywords_from_list(["清华", "清华大学"])
-    words = ps.extract_keywords("我收到了清华大学的录取通知书.")
-    words2 = keyword_processor.extract_keywords("我收到了清华大学的录取通知书.")
-    words3 = ps.extract_keywords("我收到了清华大学的录取通知书.", longest_only=True)
-    print(words)
-    print(words2)
-    print(words3)
-
-    ps.add_keywords_replace_map_from_dict({"清华": "北京", "清华大学": "清华隔壁"})
-    new_sentence = ps.replace_keywords("我收到了清华大学的录取通知书.")
-    print(new_sentence)
