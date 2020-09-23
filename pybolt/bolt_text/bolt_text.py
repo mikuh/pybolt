@@ -13,6 +13,7 @@ class BoltText(object):
         workers: int, cpu count use in batch operation.
         """
         self.ps = PrefixSet()
+        self.workers = workers
         pandarallel.initialize(nb_workers=workers)
 
     @property
@@ -28,6 +29,12 @@ class BoltText(object):
             self.ps.add_keyword(keywords)
         elif isinstance(keywords, list):
             self.ps.add_keywords_from_list(keywords)
+
+    def add_co_occurrence_words(self, word_list: list, tag=None, order=False):
+        self.ps.add_co_occurrence_words(word_list, tag, order)
+
+    def is_co_occurrence(self, sentence: str, order: bool = False, one_return: bool = True):
+        return self.ps.is_co_occurrence(sentence, order, one_return)
 
     def add_replace_map(self, replace_dict: dict):
         self.ps.add_keywords_replace_map_from_dict(replace_dict)
@@ -71,6 +78,30 @@ class BoltText(object):
                     examples.clear()
             if examples:
                 yield self.__df_replace(examples)
+
+    def batch_text_processor(self, lines: Iterable[str], processor, concurrency: int = 1000000):
+        """Batch processing of text data.
+        Args:
+            lines: a iterable data, to process
+            processor: the function use in each line
+            concurrency: int
+        """
+        examples = []
+        if isinstance(lines, Iterable):
+            n = 0
+            for line in lines:
+                n += 1
+                examples.append(line)
+                if n % concurrency == 0:
+                    df = pd.DataFrame(examples, columns=["example"])
+                    df["processor_result"] = df.example.parallel_apply(processor)
+                    yield df
+                    examples.clear()
+            if examples:
+                df = pd.DataFrame(examples, columns=["example"])
+                df["processor_result"] = df.example.parallel_apply(processor)
+                yield df
+                examples.clear()
 
     def __line_extract_processor(self, line: str):
         found_words = self.extract_keywords(line)

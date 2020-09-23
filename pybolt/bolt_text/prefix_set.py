@@ -1,8 +1,15 @@
+from itertools import combinations
+from collections import Counter
+
+
 class PrefixSet(object):
 
     def __init__(self):
         self._prefix_dic = {}
         self._replace_map = {}
+        self._co_occurrence_words = {}
+        self._co_dims = set()
+        self.co_occurrence_counts = Counter()
 
     def get_keywords(self):
         return {w for w, f in self._prefix_dic.items() if f == 1}
@@ -21,6 +28,46 @@ class PrefixSet(object):
             if w not in self._prefix_dic:
                 self._prefix_dic[w] = 0
         self._prefix_dic[w] = 1
+
+    def add_co_occurrence_words(self, word_list: list, tag=None, order=False):
+        """
+        :param word_list: like this [word1, word2]
+        :param tag: co-occurrence words's tag
+        :param order: whether to use the default sort
+        :return: bool. is has co-occurrence words
+        """
+        if not order:
+            word_list.sort()
+        for word in word_list:
+            self.add_keyword(word)
+        key = ",".join(word_list)
+        self._co_occurrence_words[key] = tag
+        self._co_dims.add(len(word_list))
+
+    def add_co_occurrence_words_from_list(self):
+        pass
+
+    def is_co_occurrence(self, sentence: str, order: bool = False, one_return: bool = True):
+        founds = self.extract_keywords(sentence)
+        flag = False
+        tag = None
+        if len(founds) < 2:
+            return flag, tag
+        dims = list(self._co_dims)
+        dims.sort()
+        for dim in dims:
+            groups = combinations(founds, dim)
+            for group in groups:
+                group = list(group)
+                if not order:
+                    group.sort()
+                _key = ",".join(group)
+                if _key in self._co_occurrence_words:
+                    if one_return:
+                        return True, self._co_occurrence_words[_key]
+                    tag = self._co_occurrence_words[_key]
+                    self.is_co_occurrence[_key] += 1
+        return flag, tag
 
     def add_keywords_replace_map_from_dict(self, source_target_map: dict):
         for a, b in source_target_map.items():
@@ -91,3 +138,18 @@ class PrefixSet(object):
                 new_sentence += sentence[i]
                 i += 1
         return new_sentence
+
+
+if __name__ == '__main__':
+    ps = PrefixSet()
+
+    ps.add_co_occurrence_words(["小明", "清华", "大学"], "Normal")
+    ps.add_co_occurrence_words(["长者", "续一秒"], "Politics")
+
+    a, b = ps.is_co_occurrence("小明考上了清华大学")
+
+    print(a, b)
+
+    a, b = ps.is_co_occurrence("我要给长者续一秒")
+
+    print(a, b)

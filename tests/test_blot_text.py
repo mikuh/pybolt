@@ -31,6 +31,37 @@ class TestBoltText(object):
         found_words = bolt_text.extract_keywords("我收到了清华大学的录取通知书.", longest_only=True)
         assert found_words == ['清华大学']
 
+    def test_is_co_occurrence(self):
+        bolt_text.add_co_occurrence_words(["小明", "清华", "大学"], "Normal")
+        a = bolt_text.is_co_occurrence("小明考上了清华大学")
+        assert a == (True, 'Normal')
+        bolt_text.add_co_occurrence_words(["小明", "大学"], "Normal")
+        a = bolt_text.is_co_occurrence("小明考上了清华大学")
+        assert a == (True, 'Normal')
+
+    def test_bath_text_processor(self):
+        def get_lines(file):
+            with open(file, 'r', encoding='utf-8') as f:
+                for line in f:
+                    yield line.strip()
+
+        def processor(sentence):
+            a, b = bolt_text.is_co_occurrence(sentence, dims=[2])
+            if a:
+                return b
+            return None
+
+        bolt_text.add_co_occurrence_words(["长者", "续一秒"], "Politics")
+        for df in bolt_text.batch_text_processor(get_lines("./data/test.corpus"), processor=processor):
+            df = df[df["processor_result"].notna()]
+            for index, row in df.iterrows():
+                assert True == ("长者" in row.example and "续一秒" in row.example)
+
+    def test_alpha_keywords_extract(self):
+        bolt_text.add_keywords(["js", "java"])
+        found_words = bolt_text.extract_keywords("javascript的简称是js.")
+        print(found_words)
+
     def test_batch_extract_keywords(self):
         def get_lines(file):
             with open(file, 'r', encoding='utf-8') as f:
