@@ -5,7 +5,7 @@ Fast text processing acceleration.
 当前0.0.1测试版:
 - 纯python实现
 - 实现了关键词查找和替换功能
-- 实现了词汇共现判别
+- 实现了任意维的词汇共现判别
 - 当前缺陷:不适用于英文词中包含更小的英文词的情况;批操作未能充分发挥多cpu性能;
 
 ## 安装pybolt
@@ -66,7 +66,7 @@ for df in bolt_text.batch_extract_keywords(get_lines(), concurrency=10000000):
 ```python
 from pybolt import bolt_text
 bolt_text.add_co_occurrence_words(["小明", "清华"], "高考")
-res, tag = bolt_text.is_co_occurrence("小明考上了清华大学", dims=[2])
+res, tag = bolt_text.is_co_occurrence("小明考上了清华大学")
 print(res, tag)
 # True 高考
 ```
