@@ -46,7 +46,7 @@ class TestBoltText(object):
                     yield line.strip()
 
         def processor(sentence):
-            a, b = bolt_text.is_co_occurrence(sentence, dims=[2])
+            a, b = bolt_text.is_co_occurrence(sentence)
             if a:
                 return b
             return None
@@ -83,6 +83,9 @@ class TestBoltText(object):
         for df in bolt_text.batch_replace_keywords(get_lines("./data/test.corpus")):
             df = df.loc[df.example.str.contains("美国女王")]
             assert df.shape[0] == 2
+
+    def test_bolt_char_clean(self):
+        assert "0角无" == bolt_text.normalize("⓪⻆🈚")
 
 
 if __name__ == "__main__":

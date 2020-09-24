@@ -1,4 +1,5 @@
 from pybolt.bolt_text.prefix_set import PrefixSet
+from pybolt.bolt_text.char_clean import CharClean
 import pandas as pd
 from pandarallel import pandarallel
 from multiprocessing import cpu_count
@@ -7,12 +8,13 @@ from typing import Iterable
 
 class BoltText(object):
 
-    def __init__(self, workers: int = cpu_count()):
+    def __init__(self, workers: int = cpu_count(), **kwargs):
         """
         Args:
         workers: int, cpu count use in batch operation.
         """
         self.ps = PrefixSet()
+        self.char_clean = CharClean(**kwargs)
         self.workers = workers
         pandarallel.initialize(nb_workers=workers)
 
@@ -50,6 +52,9 @@ class BoltText(object):
             return self.ps.remove_keyword(keywords)
         elif isinstance(keywords, list):
             return self.ps.remove_keywords_from_list(keywords)
+
+    def normalize(self, sentence):
+        return self.char_clean.normalize(sentence)
 
     def batch_extract_keywords(self, lines: Iterable[str], concurrency: int = 1000000):
         examples = []

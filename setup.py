@@ -18,6 +18,7 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
+    package_data={'': ['data/*.txt']},
     install_requires=['numpy', 'pandas', 'pandarallel'],
     python_requires='>=3.6',
 )
