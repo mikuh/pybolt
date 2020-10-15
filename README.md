@@ -88,5 +88,20 @@ for df in bolt_text.batch_text_processor(get_lines(), my_processor):
     print(df.head())
 ```
 
+### Text normalize
+```python
+from pybolt import bolt_text
+print(bolt_text.normalize("⓪⻆🈚"))
+```
+
+### Text clean
+```python
+import re
+from pybolt import bolt_text
+_pattern = re.compile("([^\u4E00-\u9FD5\u9FA6-\u9FEF\u3400-\u4DB5a-zA-Z0-9 +]+)", re.U)
+print(bolt_text.clean("aaaaa+++++.....abcadf    ga   a", pattern=_pattern, pattern_replace="", normalize=True, crc_cut=3))
+```
+
+
 ## 性能
 测试了关键词查找功能,单句速度相对[flashtext](https://github.com/vi3k6i5/flashtext)提升了30%,批操作速度相对[flashtext](https://github.com/vi3k6i5/flashtext)提升了260%.
