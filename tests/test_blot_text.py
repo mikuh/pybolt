@@ -85,7 +85,12 @@ class TestBoltText(object):
             assert df.shape[0] == 2
 
     def test_bolt_char_clean(self):
+        import re
         assert "0角无" == bolt_text.normalize("⓪⻆🈚")
+        assert "a a" == bolt_text.clean("a     a")
+        _pattern = re.compile("([^\u4E00-\u9FD5\u9FA6-\u9FEF\u3400-\u4DB5a-zA-Z0-9 +]+)", re.U)
+        assert "aaa+++abcadf ga a" == bolt_text.clean("aaaaa+++++.....abcadf    ga   a", pattern=_pattern,
+                                                      pattern_replace="", normalize=True, crc_cut=3)
 
 
 if __name__ == "__main__":

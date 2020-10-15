@@ -56,6 +56,10 @@ class BoltText(object):
     def normalize(self, sentence):
         return self.char_clean.normalize(sentence)
 
+    def clean(self, sentence, pattern=None, pattern_replace=" ", normalize=False, crc_cut=0):
+        return self.char_clean.clean(sentence, my_pattern=pattern, pattern_replace=pattern_replace, normalize=normalize,
+                                     crc_cut=crc_cut)
+
     def batch_extract_keywords(self, lines: Iterable[str], concurrency: int = 1000000):
         examples = []
         if isinstance(lines, Iterable):
