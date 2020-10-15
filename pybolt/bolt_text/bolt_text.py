@@ -14,7 +14,6 @@ class BoltText(object):
         workers: int, cpu count use in batch operation.
         """
         self.ps = PrefixSet()
-        self.char_clean = CharClean(**kwargs)
         self.workers = workers
         pandarallel.initialize(nb_workers=workers)
 
@@ -52,13 +51,6 @@ class BoltText(object):
             return self.ps.remove_keyword(keywords)
         elif isinstance(keywords, list):
             return self.ps.remove_keywords_from_list(keywords)
-
-    def normalize(self, sentence):
-        return self.char_clean.normalize(sentence)
-
-    def clean(self, sentence, pattern=None, pattern_replace=" ", normalize=False, crc_cut=0):
-        return self.char_clean.clean(sentence, my_pattern=pattern, pattern_replace=pattern_replace, normalize=normalize,
-                                     crc_cut=crc_cut)
 
     def batch_extract_keywords(self, lines: Iterable[str], concurrency: int = 1000000):
         examples = []

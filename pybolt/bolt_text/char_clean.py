@@ -13,7 +13,7 @@ class CharClean(object):
         return "".join(self._char_project.get(ch, ch) for ch in sentence)
 
     def clean(self, sentence: str, my_pattern: str = None, pattern_replace: str = " ", normalize: bool = False,
-              crc_cut: int = 0) -> str:
+              crc_cut: int = 0, num_normal: bool = False) -> str:
         if normalize:
             sentence = self.normalize(sentence)
         sentence = sentence.replace("\r", "\n")
@@ -24,6 +24,8 @@ class CharClean(object):
             sentence = re.sub(self.default_pattern, pattern_replace, sentence)
         if crc_cut:
             sentence = re.sub(r'(.)\1{3,}', r'\1\1\1', sentence)
+        if num_normal:
+            sentence = re.sub(r'\d+', '▁', sentence)
         return sentence
 
     def __load_char_project(self, file_path: str = None):

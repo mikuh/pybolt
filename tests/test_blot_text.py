@@ -89,8 +89,11 @@ class TestBoltText(object):
         assert "0角无" == bolt_text.normalize("⓪⻆🈚")
         assert "a a" == bolt_text.clean("a     a")
         _pattern = re.compile("([^\u4E00-\u9FD5\u9FA6-\u9FEF\u3400-\u4DB5a-zA-Z0-9 +]+)", re.U)
-        assert "aaa+++abcadf ga a" == bolt_text.clean("aaaaa+++++.....abcadf    ga   a", pattern=_pattern,
+        assert "aaa+++abcadf ga a" == bolt_text.clean("aaaaa+++++.....abcadf    ga   a", my_pattern=_pattern,
                                                       pattern_replace="", normalize=True, crc_cut=3)
+
+        assert "asd▁ad▁我艹▁" == bolt_text.clean("asd11111ad123我艹45687761", my_pattern=_pattern,
+                                                            pattern_replace="", normalize=True, crc_cut=3, num_normal=True)
 
 
 if __name__ == "__main__":
