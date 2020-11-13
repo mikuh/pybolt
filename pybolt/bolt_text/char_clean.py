@@ -4,7 +4,7 @@ from pybolt.utils import package_path
 
 
 class CharClean(object):
-    default_pattern = re.compile("([^\u4E00-\u9FD5\u9FA6-\u9FEF\u3400-\u4DB5a-zA-Z0-9+#&\.：:,，/\\\,。 ！;!?？%\-]+)", re.U)
+    default_pattern = re.compile("([^\u4E00-\u9FD5\u9FA6-\u9FEF\u3400-\u4DB5a-zA-Z0-9+]+)", re.U)  # #&\.：:,，/\\\,。！;!?？%\-
 
     def __init__(self, **kwargs):
         self.__load_char_project(kwargs.get("char_map_file"))
@@ -12,7 +12,7 @@ class CharClean(object):
     def normalize(self, sentence: str) -> str:
         return "".join(self._char_project.get(ch, ch) for ch in sentence)
 
-    def clean(self, sentence: str, my_pattern: str = None, pattern_replace: str = " ", normalize: bool = False,
+    def clean(self, sentence: str, my_pattern: str = None, pattern_replace: str = "", normalize: bool = True,
               crc_cut: int = 0, num_normal: bool = False) -> str:
         if normalize:
             sentence = self.normalize(sentence)

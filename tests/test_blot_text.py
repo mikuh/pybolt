@@ -38,6 +38,9 @@ class TestBoltText(object):
         bolt_text.add_co_occurrence_words(["小明", "大学"], "Normal")
         a = bolt_text.is_co_occurrence("小明考上了清华大学")
         assert a == (True, 'Normal')
+        bolt_text.add_co_occurrence_words_from_list([["中国", "人民", "nb", "Normal"], ["美国人", "nb", "Normal"]])
+        a = bolt_text.is_co_occurrence("中国人民是不是比美国人民nb呀")
+        assert a == (True, 'Normal')
 
     def test_bath_text_processor(self):
         def get_lines(file):
@@ -87,13 +90,13 @@ class TestBoltText(object):
     def test_bolt_char_clean(self):
         import re
         assert "0角无" == bolt_text.normalize("⓪⻆🈚")
-        assert "a a" == bolt_text.clean("a     a")
+        assert "aa" == bolt_text.clean("a     a")
         _pattern = re.compile("([^\u4E00-\u9FD5\u9FA6-\u9FEF\u3400-\u4DB5a-zA-Z0-9 +]+)", re.U)
         assert "aaa+++abcadf ga a" == bolt_text.clean("aaaaa+++++.....abcadf    ga   a", my_pattern=_pattern,
                                                       pattern_replace="", normalize=True, crc_cut=3)
 
         assert "asd▁ad▁我艹▁" == bolt_text.clean("asd11111ad123我艹45687761", my_pattern=_pattern,
-                                                            pattern_replace="", normalize=True, crc_cut=3, num_normal=True)
+                                               pattern_replace="", normalize=True, crc_cut=3, num_normal=True)
 
 
 if __name__ == "__main__":

@@ -34,7 +34,6 @@ class PrefixSet(object):
         :param word_list: like this [word1, word2]
         :param tag: co-occurrence words's tag
         :param order: whether to use the default sort
-        :return: bool. is has co-occurrence words
         """
         if not order:
             word_list.sort()
@@ -44,8 +43,13 @@ class PrefixSet(object):
         self._co_occurrence_words[key] = tag
         self._co_dims.add(len(word_list))
 
-    def add_co_occurrence_words_from_list(self):
-        pass
+    def add_co_occurrence_words_from_list(self, co_words_list: list, order=False):
+        """
+        :param co_words_list: just like [[word1,word2,tag],[word1,word2,None],...]
+        :param order: whether to use the default sort
+        """
+        for word_list in co_words_list:
+            self.add_co_occurrence_words(word_list=word_list[:-1], tag=word_list[-1], order=order)
 
     def is_co_occurrence(self, sentence: str, order: bool = False, one_return: bool = True):
         founds = self.extract_keywords(sentence)

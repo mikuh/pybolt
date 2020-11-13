@@ -8,3 +8,5 @@ default_logger.setLevel(logging.DEBUG)
 default_logger.addHandler(log_stderr)
 
 package_path = os.path.abspath(os.path.dirname(sys.modules[__package__].__file__))
+
+__all__ = ['default_logger', 'package_path']

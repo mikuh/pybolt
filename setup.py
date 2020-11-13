@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="py-bolt",
-    version="0.0.3",
+    version="0.0.5",
     author="geb",
     author_email="853934146@qq.com",
     description="Fast text processing acceleration.",
@@ -18,7 +18,7 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    package_data={'': ['data/*.txt']},
+    package_data={'': ['data/*.txt', 'bolt_nlp/count_ngrams']},
     install_requires=['numpy', 'pandas', 'pandarallel'],
     python_requires='>=3.6',
 )
