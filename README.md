@@ -108,7 +108,7 @@ print(bolt_text.clean("aaaaa+++++.....abcadf    ga   a", pattern=_pattern, patte
 from pybolt.bolt_nlp import WordDiscover
 wd = WordDiscover()
 wd.word_discover(["examples.txt"])
-# will save the new_word.vocab in execution directory
+# will save the new_words.vocab in execution directory
 ```
 
 ## 性能

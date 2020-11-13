@@ -5,6 +5,7 @@ from pybolt.utils import package_path
 from pybolt.utils import default_logger as logging
 from pybolt.bolt_text import bolt_text
 from collections import Counter
+from tqdm import tqdm
 import struct
 import os
 import time
@@ -69,7 +70,8 @@ class CountNgrams(object):
         with open(ngrams_result_file, 'rb') as f:
             filedata = f.read()
             filesize = f.tell()
-        for i in range(0, filesize, size_per_item):
+        logging.info("Read the count results...")
+        for i in tqdm(range(0, filesize, size_per_item)):
             s = filedata[i: i + size_per_item]
             n = unpack('l', s[-8:])
             total += n
@@ -187,11 +189,8 @@ class WordDiscover(object):
                             yield line
 
         with open(os.path.join(self.__save_path, "corpus.txt"), 'w', encoding='utf-8') as f:
-            n = 0
-            for line in corpus():
-                n += 1
-                if n % 10000 == 0:
-                    logging.info(f"Generate Corpus:Wrote {n} examples.")
+            logging.info("Generate corpus...")
+            for line in tqdm(corpus()):
                 f.write(' '.join(line) + '\n')
 
     def count_ngrams(self, memory="50%", save_txt=True):
@@ -213,6 +212,7 @@ class WordDiscover(object):
         """filter the low pmi parts.
         Generate the candidate trie.
         """
+        logging.info("Filter the ngrams by pmi, and create the candidate trie... ")
         output_ngrams = Counter()
         with open(os.path.join(self.__save_path, settings["ngram_pmi"]), 'w', encoding='utf-8') as pmi_file:
             for i in range(self.__cn.n_max - 1, 0, -1):
@@ -253,18 +253,15 @@ class WordDiscover(object):
             return result
 
         candidates = Counter()
-        n = 0
+        logging.info("Start generate the candidates...")
         with open(os.path.join(self.__save_path, settings["corpus_name"]), 'r', encoding='utf-8') as f:
-            for line in f:
+            for line in tqdm(f):
                 line = "".join(line.strip().split())
-                n += 1
                 for w in self.__candidate_trie.tokenize(line.strip()):
                     # remove single char
                     if remove_single_char and len(w) < 2:
                         continue
                     candidates[w] += 1
-                if n % 1000 == 0:
-                    logging.info("Trie tree complete tokenize {} examples".format(n))
         # filter by word frequency
         candidates = {i: j for i, j in candidates.items() if j >= self.__min_count}
         logging.info("Complete candidates by frequency.")
@@ -281,6 +278,7 @@ class WordDiscover(object):
             for i, j in sorted(self.candidates.items(), key=lambda x: -x[1]):
                 s = '%s %s\n' % (i, j)
                 f.write(s)
+        logging.info(f"Save vocab successfully: {os.path.join(self.__save_path, settings['target_file'])}")
 
     def word_discover(self, txts: list,
                       normalized_number: bool = True,
@@ -296,8 +294,3 @@ class WordDiscover(object):
         self.__expansion_filter(remove_single_char=remove_single_char)
         self.__save()
 
-
-if __name__ == '__main__':
-    wd = WordDiscover()
-
-    wd.word_discover(["/home/geb/PycharmProjects/pybolt/tests/data/examples.txt"])
