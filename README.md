@@ -1,12 +1,13 @@
 # pybolt
 Fast text processing acceleration.
-一个快速的文本处理工具.
+一个快速的文本处理及NLP工具.
 
 当前0.0.1测试版:
 - 纯python实现
 - 实现了关键词查找和替换功能
 - 实现了任意维的词汇共现判别
-- 当前缺陷:不适用于英文词中包含更小的英文词的情况;批操作未能充分发挥多cpu性能;
+- 实现了从海量语料无监督生成分词词库
+- 注意事项:为了兼容中英混合语料,提取关键词不适用于英文词中包含更小的英文词的情况;
 
 ## 安装pybolt
 ```shell script
@@ -102,6 +103,13 @@ _pattern = re.compile("([^\u4E00-\u9FD5\u9FA6-\u9FEF\u3400-\u4DB5a-zA-Z0-9 +]+)"
 print(bolt_text.clean("aaaaa+++++.....abcadf    ga   a", pattern=_pattern, pattern_replace="", normalize=True, crc_cut=3))
 ```
 
+### Word discover
+```python
+from pybolt.bolt_nlp import WordDiscover
+wd = WordDiscover()
+wd.word_discover(["examples.txt"])
+# will save the new_word.vocab in execution directory
+```
 
 ## 性能
 测试了关键词查找功能,单句速度相对[flashtext](https://github.com/vi3k6i5/flashtext)提升了30%,批操作速度相对[flashtext](https://github.com/vi3k6i5/flashtext)提升了260%.
