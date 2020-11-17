@@ -130,6 +130,7 @@ dmypy.json
 .idea/
 
 tests/data/
+tests/models/
 tests/word-discover-results/
 local_process/
 build.sh
