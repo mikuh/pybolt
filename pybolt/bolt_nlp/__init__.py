@@ -1,3 +1,4 @@
 from pybolt.bolt_nlp.word_discover import WordDiscover
 from pybolt.bolt_nlp.naive_bayes_classification.bernoulliNB import ClassificationModel as BernoulliClassifier
 from pybolt.bolt_nlp.tokenizer import Tokenizer
+from pybolt.bolt_nlp.words_tagging import WordsTagging
