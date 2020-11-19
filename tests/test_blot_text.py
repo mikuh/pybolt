@@ -31,16 +31,36 @@ class TestBoltText(object):
         found_words = bolt_text.extract_keywords("我收到了清华大学的录取通知书.", longest_only=True)
         assert found_words == ['清华大学']
 
+    def test_extract_keywords_with_index(self):
+        bolt_text.clear_keywords()
+        bolt_text.add_keywords("清华大学")
+        sentence = "我收到了清华大学的录取通知书"
+        found_words = bolt_text.extract_keywords_with_index(sentence)
+        assert len(found_words) == 1
+        for word, index in found_words:
+            assert word == sentence[index[0]: index[1]]
+        bolt_text.clear_keywords()
+        bolt_text.add_keywords(["清华", "清华大学"])
+        sentence = "我收到了清华大学的录取通知书"
+        found_words = bolt_text.extract_keywords_with_index(sentence)
+        assert len(found_words) == 2
+        for word, index in found_words:
+            assert word == sentence[index[0]: index[1]]
+        found_words = bolt_text.extract_keywords_with_index(sentence, longest_only=True)
+        assert len(found_words) == 1
+        for word, index in found_words:
+            assert word == sentence[index[0]: index[1]]
+
     def test_is_co_occurrence(self):
         bolt_text.add_co_occurrence_words(["小明", "清华", "大学"], "Normal")
         a = bolt_text.is_co_occurrence("小明考上了清华大学")
-        assert a == (True, 'Normal')
+        assert a == (True, ['Normal'])
         bolt_text.add_co_occurrence_words(["小明", "大学"], "Normal")
         a = bolt_text.is_co_occurrence("小明考上了清华大学")
-        assert a == (True, 'Normal')
+        assert a == (True, ['Normal'])
         bolt_text.add_co_occurrence_words_from_list([["中国", "人民", "nb", "Normal"], ["美国人", "nb", "Normal"]])
         a = bolt_text.is_co_occurrence("中国人民是不是比美国人民nb呀")
-        assert a == (True, 'Normal')
+        assert a == (True, ['Normal'])
 
     def test_bath_text_processor(self):
         def get_lines(file):
@@ -97,6 +117,14 @@ class TestBoltText(object):
 
         assert "asd▁ad▁我艹▁" == bolt_text.clean("asd11111ad123我艹45687761", my_pattern=_pattern,
                                                pattern_replace="", normalize=True, crc_cut=3, num_normal=True)
+
+    def test_bolt_char_clean_index(self):
+        with open("data/examples.txt", 'r', encoding='utf-8') as f:
+            for line in f:
+                sentence1 = bolt_text.clean(line)
+                sentence2, index = bolt_text.clean_with_index(line)
+                assert sentence1 == sentence2
+                assert sentence2 == bolt_text.clean("".join([line[i] for i in index]))
 
 
 if __name__ == "__main__":

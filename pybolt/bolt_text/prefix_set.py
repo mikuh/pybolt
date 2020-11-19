@@ -55,6 +55,7 @@ class PrefixSet(object):
         founds = self.extract_keywords(sentence)
         flag = False
         tag = None
+        tags = []
         if len(founds) < 2:
             return flag, tag
         dims = list(self._co_dims)
@@ -68,10 +69,36 @@ class PrefixSet(object):
                 _key = ",".join(group)
                 if _key in self._co_occurrence_words:
                     if one_return:
-                        return True, self._co_occurrence_words[_key]
+                        return True, [self._co_occurrence_words[_key]]
                     tag = self._co_occurrence_words[_key]
-                    self.is_co_occurrence[_key] += 1
-        return flag, tag
+                    tags.append(tag)
+        return flag, tags
+
+    def get_co_occurrence_words(self, sentence: str, founds_words: list = [], order=False):
+        words_index = {}
+        if len(founds_words) == 0:
+            _founds_words = self.extract_keywords_with_index(sentence, longest_only=True)
+            for word, index in _founds_words:
+                if word not in words_index:
+                    words_index[word] = []
+                words_index[word].append(index)
+                founds_words.append(word)
+        if len(founds_words) < 2:
+            return None
+        dims = list(self._co_dims)
+        dims.sort()
+        match_words = {}
+        for dim in dims:
+            groups = combinations(founds_words, dim)
+            for group in groups:
+                group = list(group)
+                if not order:
+                    group.sort()
+                _key = ",".join(group)
+                if _key in self._co_occurrence_words:
+                    for w in _key.split(","):
+                        match_words[w] = self._co_occurrence_words[_key]
+        return match_words, words_index
 
     def add_keywords_replace_map_from_dict(self, source_target_map: dict):
         for a, b in source_target_map.items():
@@ -116,6 +143,25 @@ class PrefixSet(object):
                 keywords.append(word)
         return keywords
 
+    def extract_keywords_with_index(self, sentence: str, longest_only=False):
+        N = len(sentence)
+        keywords = []
+        for i in range(N):
+            flag, index = sentence[i], [i, i + 1]
+            j = i
+            word = None
+            while j < N and (flag in self._prefix_dic):
+                if self._prefix_dic[flag] == 1:
+                    if not longest_only:
+                        keywords.append((flag, index))
+                    else:
+                        word, _index = flag, index
+                j += 1
+                flag, index = sentence[i: j + 1], [i, j + 1]
+            if longest_only and word:
+                keywords.append((word, _index))
+        return keywords
+
     def replace_keywords(self, sentence: str) -> str:
         """Replace word use keywords map.
         Args:
@@ -154,6 +200,10 @@ if __name__ == '__main__':
 
     print(a, b)
 
-    a, b = ps.is_co_occurrence("我要给长者续一秒")
+    a, b = ps.is_co_occurrence("我要给长者续一秒", one_return=False)
 
     print(a, b)
+
+    print(ps.extract_keywords_with_index("我要给长者续一秒"))
+
+    print(ps.get_co_occurrence_words("我要给长者续一秒"))

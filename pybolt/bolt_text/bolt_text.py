@@ -41,6 +41,10 @@ class BoltText(PrefixSet, CharClean):
         elif isinstance(keywords, list):
             return self.remove_keywords_from_list(keywords)
 
+    def clear_keywords(self):
+        for word in self.keywords:
+            self.remove_keyword(word)
+
     def batch_extract_keywords(self, lines: Iterable[str], concurrency: int = 1000000):
         examples = []
         if isinstance(lines, Iterable):
