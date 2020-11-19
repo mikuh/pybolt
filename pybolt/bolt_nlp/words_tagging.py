@@ -14,7 +14,6 @@ class WordsTagging(object):
 
     def tag(self, sentence: str, use_hmm=True, co_order=False):
         word_tag_list = [[word, self.__word_tag_map.get(word, 'New')] for word in self.__tk.cut(sentence, HMM=use_hmm)]
-        print(word_tag_list)
         query_words = [word for word, tag in word_tag_list if word in self.__bt.keywords]
         # co occurrence words adjust
         match_words, words_index = self.__bt.get_co_occurrence_words(sentence, founds_words=query_words, order=co_order)

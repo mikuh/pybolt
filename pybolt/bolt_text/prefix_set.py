@@ -84,7 +84,7 @@ class PrefixSet(object):
                 words_index[word].append(index)
                 founds_words.append(word)
         if len(founds_words) < 2:
-            return None
+            return {}, {}
         dims = list(self._co_dims)
         dims.sort()
         match_words = {}

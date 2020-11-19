@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="py-bolt",
-    version="0.0.10",
+    version="0.0.11",
     author="geb",
     author_email="853934146@qq.com",
     description="Fast text processing acceleration.",
