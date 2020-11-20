@@ -74,9 +74,10 @@ class PrefixSet(object):
                     tags.append(tag)
         return flag, tags
 
-    def get_co_occurrence_words(self, sentence: str, founds_words: list = [], order=False):
+    def get_co_occurrence_words(self, sentence: str, founds_words: list = None, order=False):
         words_index = {}
-        if len(founds_words) == 0:
+        if founds_words is None:
+            founds_words = []
             _founds_words = self.extract_keywords_with_index(sentence, longest_only=True)
             for word, index in _founds_words:
                 if word not in words_index:
@@ -193,17 +194,26 @@ class PrefixSet(object):
 if __name__ == '__main__':
     ps = PrefixSet()
 
-    ps.add_co_occurrence_words(["小明", "清华", "大学"], "Normal")
-    ps.add_co_occurrence_words(["长者", "续一秒"], "Politics")
+    # ps.add_co_occurrence_words(["小明", "清华", "大学"], "Normal")
+    # ps.add_co_occurrence_words(["长者", "续一秒"], "Politics")
+    #
+    # a, b = ps.is_co_occurrence("小明考上了清华大学")
+    #
+    # print(a, b)
+    #
+    # a, b = ps.is_co_occurrence("我要给长者续一秒", one_return=False)
+    #
+    # print(a, b)
+    #
+    # print(ps.extract_keywords_with_index("我要给长者续一秒"))
+    cooc_file = "/home/geb/PycharmProjects/nlp-data/co-occurrence-words-v2.txt"
+    cooc_data = []
+    with open("/home/geb/PycharmProjects/nlp-data/co-occurrence-words-v2.txt", 'r', encoding='utf-8') as f:
+        for line in f:
+            cooc_data.append(line.strip().split())
+    for x in cooc_data:
+        ps.add_co_occurrence_words(x[:-1], x[-1])
 
-    a, b = ps.is_co_occurrence("小明考上了清华大学")
+    print(ps.extract_keywords_with_index("这1星评论就一直放这儿!反正官方只要查他俩角色数据指定能看出开挂痕迹!要因为充钱了就能开挂被护犊子,这评论就一直放这儿让所有玩家瞧瞧你家的态度!", longest_only=True))
 
-    print(a, b)
-
-    a, b = ps.is_co_occurrence("我要给长者续一秒", one_return=False)
-
-    print(a, b)
-
-    print(ps.extract_keywords_with_index("我要给长者续一秒"))
-
-    print(ps.get_co_occurrence_words("我要给长者续一秒"))
+    print(ps.get_co_occurrence_words("这1星评论就一直放这儿!反正官方只要查他俩角色数据指定能看出开挂痕迹!要因为充钱了就能开挂被护犊子,这评论就一直放这儿让所有玩家瞧瞧你家的态度!"))

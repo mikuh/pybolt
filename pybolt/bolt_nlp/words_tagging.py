@@ -19,8 +19,9 @@ class WordsTagging(object):
         match_words, words_index = self.__bt.get_co_occurrence_words(sentence, founds_words=query_words, order=co_order)
         index_tag = {}
         for k, v in words_index.items():
-            for x in range(v[0], v[1]):
-                index_tag[x] = match_words[k]
+            for y in v:
+                for x in range(y[0], y[1]):
+                    index_tag[x] = match_words.get(k, "Normal")
         i = -1
         for word, tag in word_tag_list:
             if word in match_words:
@@ -43,18 +44,9 @@ class WordsTagging(object):
                 word_tag_map[word] = "Normal"
         return word_tag_map
 
-    def __en_check(self):
-        pass
-
-    def __num_check(self):
-        pass
-
-    def __cooc_check(self):
-        pass
-
     def __init_co_occurrence_words(self, cooc_data: list, order: bool = False):
         """Initialize co-occurrence keywords
-        :param cooc_data: like [(word1,word2,word3,..., Label), (word1,word2,...,Label),...]
+        :param cooc_data: like [[word1,word2,word3,..., Label], [word1,word2,...,Label],...]
         :return:
         """
         for words in cooc_data:
@@ -64,9 +56,15 @@ class WordsTagging(object):
 if __name__ == '__main__':
     pass
 
-    wt = WordsTagging(label_dic="/home/geb/PycharmProjects/nlp-data/default_dict.txt",
-                      cooc_data=[["长者", "续一秒", "Politics"], ["我", "大大", "长者", "Abuse"]])
+    cooc_file = "/home/geb/PycharmProjects/nlp-data/co-occurrence-words-v2.txt"
+    cooc_data = []
+    with open("/home/geb/PycharmProjects/nlp-data/co-occurrence-words-v2.txt", 'r', encoding='utf-8') as f:
+        for line in f:
+            cooc_data.append(line.strip().split())
 
-    a = wt.tag("我为长者和大大续一秒")
+    wt = WordsTagging(label_dic="/home/geb/PycharmProjects/nlp-data/default_dict.txt",
+                      cooc_data=cooc_data)
+
+    a = wt.tag("我为长者续一秒")
 
     print(" ".join([f"{w}/{t}" for w, t in a]))
