@@ -172,6 +172,6 @@ class Tokenizer(object):
 if __name__ == '__main__':
 
 
-    tk = Tokenizer("/home/geb/PycharmProjects/nlp-data/default_dict.txt")
+    tk = Tokenizer("/home/geb/PycharmProjects/nlp-data/taptap_dict.txt")
 
-    print(" ".join(tk.cut("你刺客攻击没我萨满高hhh,可以加\/吗")))
+    print(" ".join(tk.cut("习习习习习习,习蛤蛤,蛤蛤,,习蛤蟆闹革命,傻逼")))

@@ -28,6 +28,17 @@ class ClassificationModel(object):
         self.__save()
         logging.info(f"Save model and parameters, at: {self.__save_path}")
 
+    def load_model(self, preprocess, clf_file, vectorizer_file):
+        self.preprocess = preprocess
+        self.vec_model = joblib.load(vectorizer_file)
+        self.classification_model = joblib.load(clf_file)
+
+    def predict(self, inputs):
+        inputs = self.preprocess(inputs)
+        count_vec = self.vec_model.transform(inputs)
+        ret = list(self.classification_model.predict(count_vec))
+        return ret
+
     def score(self, inputs, targets):
         return self.classification_model.score(inputs, targets)
 
@@ -55,5 +66,5 @@ class ClassificationModel(object):
             "ClassLogProb": class_log_prob.tolist()
         }
 
-        with open(os.path.join(self.__save_path, "data.json"), 'w', encoding='utf-8') as f:
+        with open(os.path.join(self.__save_path, "model.json"), 'w', encoding='utf-8') as f:
             json.dump(json_data, f)
