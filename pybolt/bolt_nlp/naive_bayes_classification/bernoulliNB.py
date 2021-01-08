@@ -22,8 +22,8 @@ class ClassificationModel(object):
     def fit(self, inputs, targets):
         inputs = self.vec_model.fit_transform(inputs)
         self.classification_model.fit(inputs, targets)
-        self.accuracy = self.score(inputs, targets)
-        logging.info(f"\nAccuracy: {self.accuracy}")
+        # self.accuracy = self.score(inputs, targets)
+        # logging.info(f"\nAccuracy: {self.accuracy}")
 
         self.__save()
         logging.info(f"Save model and parameters, at: {self.__save_path}")
