@@ -20,7 +20,7 @@ class TestBoltNlp(object):
     def test_tokenizer(self):
         tk = Tokenizer("/home/geb/PycharmProjects/nlp-data/taptap_dict.txt")
         assert " ".join(tk.cut("你刺客攻击没我萨满高hhh,可以加\/吗")) == "你 刺客 攻击 没 我 萨满 高 hhh , 可以 加\/ 吗"
-        print(" ".join(tk.cut("不知道为什么评价里会有人污蔑我操纵评论")))
+        print(" ".join(tk.cut("少昊哥哥我来舔你了")))
 
 if __name__ == "__main__":
     pytest.main(["-s", "test_blot_nlp.py"])

@@ -53,12 +53,12 @@ def edit_sim_str(s1, s2):
 
 
 if __name__ == '__main__':
-    gray_code = chinese_char_gray_encode("毛泽东的条件是可以穷举的吗")
+    # gray_code = chinese_char_gray_encode("毛泽东的条件是可以穷举的吗")
 
-    print(gray_code)
+    # print(gray_code)
 
-    s1 = "江泽民"
-    s2 = "江贼名"
+    s1 = "毛"
+    s2 = "喵"
 
 
     hanming_sim = hm_sim_str("".join(chinese_char_gray_encode(s1)), "".join(chinese_char_gray_encode(s2)))
@@ -69,7 +69,7 @@ if __name__ == '__main__':
 
 
 
-    import pickle
-    with open("/home/geb/PycharmProjects/pybolt/pybolt/data/four_code.pkl", 'rb') as f:
-        a = pickle.load(f)
-        print(a)
+    # import pickle
+    # with open("/home/geb/PycharmProjects/pybolt/pybolt/data/four_code.pkl", 'rb') as f:
+    #     a = pickle.load(f)
+    #     print(a)

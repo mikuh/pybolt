@@ -10,13 +10,13 @@ from pybolt.utils import default_logger as logging
 
 class ClassificationModel(object):
 
-    def __init__(self, alpha=0.1):
+    def __init__(self, alpha=0.1, is_train=True):
         self.vec_model = CountVectorizer(lowercase=False, token_pattern=r"(?u)[^ \n]+")
         self.classification_model = BernoulliNB(alpha=alpha)
         self.__save_path = "./models/" + str(int(time.time()))
         self.accuracy = 0.0
 
-        if not os.path.exists(self.__save_path):
+        if not os.path.exists(self.__save_path) and is_train:
             os.makedirs(self.__save_path)
 
     def fit(self, inputs, targets):
@@ -68,3 +68,20 @@ class ClassificationModel(object):
 
         with open(os.path.join(self.__save_path, "model.json"), 'w', encoding='utf-8') as f:
             json.dump(json_data, f)
+
+
+if __name__ == '__main__':
+    import jieba
+
+
+    def preprocess(txts: list):
+        return [" ".join(jieba.cut(txt, cut_all=True)) for txt in txts]
+
+
+    cl = ClassificationModel()
+    cl.load_model(preprocess,
+                  "/home/geb/PycharmProjects/adrec/bernoulliNB2/models/1608199130/clf_bernoulli_nb.model",
+                  "/home/geb/PycharmProjects/adrec/bernoulliNB2/models/1608199130/vectorizer.model")
+
+    res = cl.predict(["	聚划算 日入3000w zeny 咨询ro1721"])
+    print(res)
