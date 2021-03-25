@@ -4,11 +4,12 @@ import numpy as np
 from pybolt.utils import default_logger as logging
 import joblib
 import time
-
+import json
+import pickle
 
 class TFIDF(object):
 
-    def __init__(self, corpus: Iterable):
+    def __init__(self, corpus: Iterable = None):
         self.corpus = corpus
         self.total_doc_num = 0
         self.word_doc_count = Counter()
@@ -23,7 +24,16 @@ class TFIDF(object):
 
     def load_idf(self, file: str):
         start = time.time()
-        idf = joblib.load(file)
+        with open(file, 'rb') as f:
+            idf = pickle.load(f)
+        self.total_doc_num = idf["total_doc_num"]
+        self.word_doc_count = idf["word_doc_count"]
+        logging.info("Loading idf cost {} seconds.".format(time.time() - start))
+
+    def load_idf_json(self, file: str):
+        start = time.time()
+        with open(file, 'r', encoding='utf-8') as f:
+            idf = json.load(f)
         self.total_doc_num = idf["total_doc_num"]
         self.word_doc_count = idf["word_doc_count"]
         logging.info("Loading idf cost {} seconds.".format(time.time() - start))
@@ -35,7 +45,18 @@ class TFIDF(object):
             "total_doc_num": self.total_doc_num,
             "word_doc_count": self.word_doc_count,
         }
-        joblib.dump(idf, file)
+        with open(file, 'wb') as f:
+            pickle.dump(idf, f)
+
+    def save_idf_json(self, file:str):
+        if self.total_doc_num == 0:
+            return UnboundLocalError("Word doc count not be Inited!")
+        idf = {
+            "total_doc_num": self.total_doc_num,
+            "word_doc_count": self.word_doc_count,
+        }
+        with open(file, 'w', encoding='utf-8') as f:
+            json.dump(idf, f)
 
     def idf(self, word: str):
         if self.total_doc_num == 0:
@@ -75,5 +96,6 @@ if __name__ == '__main__':
     del tfidf
 
     tfidf = TFIDF(corpus)
-    tfidf.load_idf("text.idf")
+    tfidf.load_idf_json("/home/geb/PycharmProjects/meta-context-discriminator/plan_primary/idf.json")
+    tfidf.save_idf("/home/geb/PycharmProjects/meta-context-discriminator/plan_primary/idf.pkl")
     print(tfidf.tfidf_sentece("This is the first document."))
