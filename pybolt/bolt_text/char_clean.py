@@ -4,7 +4,7 @@ from pybolt.utils import package_path
 
 
 class CharClean(object):
-    default_pattern = re.compile("([^\u4E00-\u9FD5\u9FA6-\u9FEF\u3400-\u4DB5a-zA-Z0-9+𫘜]+)",
+    default_pattern = re.compile("([^\u4E00-\u9FD5\u9FA6-\u9FEF\u3400-\u4DB5\u20000-\u2A6DFa-zA-Z0-9+𫘜𩽾𩾌]+)",
                                  re.U)  # #&\.：:,，/\\\,。！;!?？%\-
 
     def __init__(self, **kwargs):
